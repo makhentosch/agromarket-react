@@ -2,6 +2,10 @@ import { vi } from 'vitest';
 
 // Ответ «сервера»: Response - стандартный класс, как в настоящем fetch
 export function jsonResponse(body, status = 200) {
+  // У ответа 204 No Content тела быть не может, как и у настоящего сервера
+  if (status === 204) {
+    return new Response(null, { status });
+  }
   return new Response(JSON.stringify(body), {
     status,
     headers: { 'Content-Type': 'application/json' },
