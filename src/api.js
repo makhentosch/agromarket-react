@@ -1,5 +1,5 @@
-// Адрес API — из переменной окружения Vite.
-// Локально берётся из .env.development, на хостинге (ЛР9) — из настроек сборки
+// Адрес API - из переменной окружения Vite.
+// Локально берётся из .env.development, на хостинге (ЛР9) - из настроек сборки
 export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
 // Запрос к API: JSON-заголовки, токен из localStorage, разбор ответа.
