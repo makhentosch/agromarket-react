@@ -1,0 +1,356 @@
+/* ===== Сброс box model: width/height включают padding и border ===== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, Arial, sans-serif;
+  background: #f5f7f2;
+  color: #1f2a1f;
+}
+
+img {
+  max-width: 100%; /* картинка никогда не вылезет за контейнер */
+  display: block;
+}
+
+/* ===== Шапка (mobile-first: на телефоне всё в столбик) ===== */
+.site-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* логотип слева, корзина справа (в ряду) */
+  align-items: center;            /* всё по центру */
+  gap: 12px;
+  padding: 12px 24px;
+  background: #2e7d32;
+  color: #ffffff;
+}
+
+.logo {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.nav-links {
+  display: flex;
+  gap: 24px;
+  list-style: none; /* убираем точки у <li> */
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links a {
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.nav-links a:hover {
+  text-decoration: underline;
+  color: #c8e6c9;
+}
+
+/* ===== Панель над каталогом ===== */
+.catalog-toolbar {
+  display: flex;
+  justify-content: space-between; /* заголовок слева, поиск справа */
+  align-items: center;
+  flex-wrap: wrap;                /* на узком экране поиск переносится вниз */
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.catalog-toolbar h2 {
+  margin: 0;
+}
+
+.catalog-toolbar input {
+  padding: 8px 12px;
+  min-width: 240px;
+  border: 1px solid #b9c4b5;
+  border-radius: 8px;
+  font: inherit;
+}
+
+.status {
+  margin: 0 0 16px;
+}
+
+.error {
+  margin-bottom: 16px;
+  padding: 16px;
+  border-radius: 8px;
+  background: #fdecea;
+  color: #b71c1c;
+  font-weight: 700;
+}
+
+/* ===== Карточка ===== */
+.card {
+  display: flex;
+  flex-direction: column; /* элементы карточки — в столбик */
+  gap: 8px;
+  padding: 16px;
+  background: #ffffff;
+  border: 1px solid #dfe6dc;
+  border-radius: 10px;
+}
+
+.card img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover; /* обрезать, а не растягивать картинку */
+  border-radius: 6px;
+}
+
+.card h3,
+.card p {
+  margin: 0;
+}
+
+.card p {
+  font-weight: 700;
+  color: #2e7d32;
+}
+
+.card button {
+  margin-top: auto; /* «съедает» всё свободное место сверху — кнопка всегда внизу */
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  background: #2e7d32;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.card button:hover {
+  background: #1b5e20;
+}
+
+/* «Товар недели» */
+.card--featured {
+  background: #f1f8e9;
+  border-color: #9ccc65;
+}
+
+.badge {
+  align-self: flex-start; /* не растягиваться на всю ширину карточки */
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: #ff9800;
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+/* ===== Сетка каталога ===== */
+/* auto-fill: колонки не растягиваются, если товаров мало
+   (auto-fit растянул бы 1–2 карточки на всю ширину) */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+/* ===== Макет страницы (mobile-first) ===== */
+/* Телефон: всё в одну колонку, aside уходит под каталог */
+.page {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  max-width: 1280px;
+  margin: 0 auto; /* центрируем контент на широком экране */
+  padding: 16px;
+}
+
+.sidebar {
+  background: #ffffff;
+  border: 1px solid #dfe6dc;
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.sidebar h3 {
+  margin-top: 0;
+}
+
+/* ===== Форма ===== */
+.contact {
+  grid-column: 1 / -1; /* от первой до последней линии сетки = вся ширина */
+  background: #ffffff;
+  border: 1px solid #dfe6dc;
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.contact h2 {
+  margin-top: 0;
+}
+
+.contact-form {
+  display: grid;
+  gap: 8px;
+  max-width: 520px;
+}
+
+.contact-form input,
+.contact-form textarea {
+  padding: 8px 12px;
+  border: 1px solid #b9c4b5;
+  border-radius: 6px;
+  font: inherit;
+}
+
+.contact-form input:user-invalid {
+  border-color: #c62828; /* красная рамка у неверно заполненного поля */
+}
+
+.contact-form button {
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  background: #2e7d32;
+  color: #ffffff;
+  font: inherit;
+  cursor: pointer;
+}
+
+/* ===== Подвал ===== */
+.site-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px;
+  background: #1f2a1f;
+  color: #e8f0e5;
+}
+
+.site-footer address {
+  font-style: normal;
+}
+
+.site-footer p {
+  margin: 4px 0;
+}
+
+.site-footer a {
+  color: #c8e6c9;
+}
+
+/* ===== Планшет: от 768px ===== */
+@media (min-width: 768px) {
+  .site-header {
+    flex-direction: row; /* шапка снова в ряд */
+    position: sticky;    /* бонус: липкая шапка */
+    top: 0;
+    z-index: 10;
+  }
+
+  .card--featured {
+    grid-column: span 2; /* растягиваем только когда колонок минимум две */
+  }
+
+  .site-footer {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+}
+
+/* ===== Десктоп: от 1024px ===== */
+@media (min-width: 1024px) {
+  /* каталог слева (3 доли), доставка справа (1 доля) */
+  .page {
+    grid-template-columns: 3fr 1fr;
+    padding: 24px;
+  }
+
+  .sidebar {
+    align-self: start;  /* не растягиваться на всю высоту каталога */
+    position: sticky;   /* бонус: липкая боковая панель */
+    top: 80px;
+  }
+}
+
+/* ===== Вход и роли (лабораторная 7) ===== */
+.header-user {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.header-button {
+  padding: 6px 14px;
+  border: 1px solid #ffffff;
+  border-radius: 6px;
+  background: transparent;
+  color: #ffffff;
+  font: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.header-button:hover {
+  background: #1b5e20;
+}
+
+.auth {
+  background: #ffffff;
+  border: 1px solid #dfe6dc;
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.auth h2 {
+  margin-top: 0;
+}
+
+.link-button {
+  margin-top: 12px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: #2e7d32;
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.success {
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: #e8f5e9;
+  color: #1b5e20;
+  font-weight: 700;
+}
+
+.card .card-delete {
+  margin-top: 0;
+  background: #c62828;
+}
+
+.card .card-delete:hover {
+  background: #8e0000;
+}
+
+.table-wrap {
+  overflow-x: auto; /* на телефоне таблица прокручивается, а не ломает страницу */
+}
+
+.orders-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.orders-table th,
+.orders-table td {
+  padding: 8px;
+  border-bottom: 1px solid #dfe6dc;
+  text-align: left;
+  vertical-align: top;
+}
