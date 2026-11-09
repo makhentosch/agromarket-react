@@ -1,4 +1,4 @@
-// Список оптовых заявок — виден только администратору
+// Список оптовых заявок - виден только администратору
 function OrdersList({ orders, error }) {
   return (
     <section id="orders" className="contact">
@@ -25,10 +25,10 @@ function OrdersList({ orders, error }) {
                   <td>{order.id}</td>
                   <td>{order.name}</td>
                   <td>{order.email}</td>
-                  <td>{order.phone || '—'}</td>
+                  <td>{order.phone || '-'}</td>
                   <td>{order.volume}</td>
-                  <td>{order.delivery_date ? new Date(order.delivery_date).toLocaleDateString('ru-RU') : '—'}</td>
-                  <td>{order.comment || '—'}</td>
+                  <td>{order.delivery_date ? new Date(order.delivery_date).toLocaleDateString('ru-RU') : '-'}</td>
+                  <td>{order.comment || '-'}</td>
                 </tr>
               ))}
             </tbody>

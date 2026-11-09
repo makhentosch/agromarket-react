@@ -92,7 +92,7 @@ img {
 /* ===== Карточка ===== */
 .card {
   display: flex;
-  flex-direction: column; /* элементы карточки — в столбик */
+  flex-direction: column; /* элементы карточки - в столбик */
   gap: 8px;
   padding: 16px;
   background: #ffffff;
@@ -118,7 +118,7 @@ img {
 }
 
 .card button {
-  margin-top: auto; /* «съедает» всё свободное место сверху — кнопка всегда внизу */
+  margin-top: auto; /* «съедает» всё свободное место сверху - кнопка всегда внизу */
   padding: 10px;
   border: none;
   border-radius: 6px;
@@ -149,7 +149,7 @@ img {
 
 /* ===== Сетка каталога ===== */
 /* auto-fill: колонки не растягиваются, если товаров мало
-   (auto-fit растянул бы 1–2 карточки на всю ширину) */
+   (auto-fit растянул бы 1-2 карточки на всю ширину) */
 .product-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
