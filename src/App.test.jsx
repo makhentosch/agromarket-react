@@ -1,54 +1,64 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
+import { http, HttpResponse } from 'msw';
+import { server } from './test/server';
+import { renderWithProviders, loginAs } from './test/utils';
+import { admin, buyer } from './test/handlers';
 import App from './App';
-import { mockFetchRoutes } from './test/mockFetch';
 
-const admin = { id: 1, name: 'Администратор', email: 'admin@agromarket.kz', role: 'admin' };
+describe('App: маршруты и права', () => {
+  test('страница товара показывает товар из /api/products/:id', async () => {
+    renderWithProviders(<App />, { route: '/products/1' });
 
-// Пользователь «уже входил»: токен и данные лежат в localStorage, как после LoginForm
-function loginAs(user) {
-  localStorage.setItem('token', 'test-token');
-  localStorage.setItem('user', JSON.stringify(user));
-}
-
-describe('App: запросы с токеном', () => {
-  test('проверка входа и заявки запрашиваются с заголовком Authorization', async () => {
-    loginAs(admin);
-    const spy = mockFetchRoutes({
-      '/products': [[]],
-      '/auth/me': [admin],
-      '/orders': [[]],
-    });
-    render(<App />);
-
-    expect(await screen.findByRole('heading', { name: 'Заявки' })).toBeInTheDocument();
-
-    const calls = spy.mock.calls.map(([url, options]) => ({ url: String(url), options }));
-    const me = calls.find((c) => c.url.endsWith('/api/auth/me'));
-    const orders = calls.find((c) => c.url.endsWith('/api/orders'));
-    expect(me.options.headers.Authorization).toBe('Bearer test-token');
-    expect(orders.options.headers.Authorization).toBe('Bearer test-token');
+    expect(await screen.findByRole('heading', { name: 'Мёд гречишный' })).toBeInTheDocument();
+    expect(screen.getByText('Категория: Мёд')).toBeInTheDocument();
   });
 
-  test('сервер ответил 401: токен удаляется и показывается форма входа', async () => {
-    loginAs({ ...admin, role: 'user', name: 'Айгерим' });
-    mockFetchRoutes({
-      '/products': [[]],
-      '/auth/me': [{ error: 'Срок действия токена истёк, войдите снова' }, 401],
-    });
-    render(<App />);
+  test('несуществующий товар - «Товар не найден»', async () => {
+    renderWithProviders(<App />, { route: '/products/999' });
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('Товар не найден');
+  });
+
+  test('гость на /admin попадает на страницу входа', async () => {
+    renderWithProviders(<App />, { route: '/admin' });
 
     expect(await screen.findByRole('heading', { name: 'Вход' })).toBeInTheDocument();
-    await waitFor(() => expect(localStorage.getItem('token')).toBeNull());
-    expect(screen.queryByRole('button', { name: /выйти/i })).not.toBeInTheDocument();
   });
 
-  test('гость не видит заявки и кнопки «Удалить»', async () => {
-    const spy = mockFetchRoutes({ '/products': [[{ id: 1, name: 'Гречка', price: '700.00', unit: 'кг' }]] });
-    render(<App />);
+  test('покупатель на /admin видит «Нет доступа»', async () => {
+    loginAs(buyer, 'test-token');
+    renderWithProviders(<App />, { route: '/admin' });
 
-    expect(await screen.findByText('Гречка')).toBeInTheDocument();
-    expect(screen.queryByRole('heading', { name: 'Заявки' })).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /удалить/i })).not.toBeInTheDocument();
-    expect(spy.mock.calls.some(([url]) => String(url).endsWith('/api/orders'))).toBe(false);
+    expect(await screen.findByRole('alert')).toHaveTextContent(/нет доступа/i);
+  });
+
+  test('админ на /admin видит заявки; запросы идут с заголовком Authorization', async () => {
+    loginAs(admin, 'admin-token');
+    const headers = {};
+    server.events.on('request:start', ({ request }) => {
+      headers[new URL(request.url).pathname] = request.headers.get('Authorization');
+    });
+    renderWithProviders(<App />, { route: '/admin' });
+
+    expect(await screen.findByRole('heading', { name: 'Заявки' })).toBeInTheDocument();
+    await waitFor(() => expect(headers['/api/orders']).toBe('Bearer admin-token'));
+    expect(headers['/api/auth/me']).toBe('Bearer admin-token');
+    server.events.removeAllListeners();
+  });
+
+  test('сервер ответил 401 на /auth/me: токен удаляется, в шапке «Войти»', async () => {
+    loginAs(buyer, 'test-token');
+    server.use(http.get('*/api/auth/me', () =>
+      HttpResponse.json({ error: 'Срок действия токена истёк, войдите снова' }, { status: 401 })));
+    renderWithProviders(<App />);
+
+    expect(await screen.findByRole('link', { name: 'Войти' })).toBeInTheDocument();
+    await waitFor(() => expect(localStorage.getItem('token')).toBeNull());
+  });
+
+  test('неизвестный адрес - «Страница не найдена»', () => {
+    renderWithProviders(<App />, { route: '/nope' });
+
+    expect(screen.getByRole('heading', { name: 'Страница не найдена' })).toBeInTheDocument();
   });
 });
