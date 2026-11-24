@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { apiFetch } from '../api';
+import ErrorMessage from './ErrorMessage';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MIN_PASSWORD_LENGTH = 8;
@@ -39,7 +40,7 @@ function LoginForm({ onLogin }) {
 
     const validationError = validate(body, isRegister);
     if (validationError) {
-      setError(validationError);
+      setError({ message: validationError });
       return;
     }
 
@@ -54,7 +55,8 @@ function LoginForm({ onLogin }) {
       localStorage.setItem('user', JSON.stringify(data.user));
       onLogin(data.user);
     } catch (err) {
-      setError(err.message);
+      // 400 с details, 401, 409, 429: текст берётся из ответа сервера
+      setError(err);
     } finally {
       setSending(false);
     }
@@ -84,7 +86,7 @@ function LoginForm({ onLogin }) {
           autoComplete={isRegister ? 'new-password' : 'current-password'}
         />
 
-        {error && <div className="error" role="alert">{error}</div>}
+        <ErrorMessage error={error} />
 
         <button type="submit" disabled={sending}>
           {isRegister ? 'Зарегистрироваться' : 'Войти'}
