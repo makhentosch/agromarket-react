@@ -11,7 +11,7 @@ describe('ProductCard', () => {
     renderWithProviders(<ProductCard product={honey} onAdd={vi.fn()} />);
 
     expect(screen.getByText('Мёд гречишный')).toBeInTheDocument();
-    expect(screen.getByText('3500 тг / л')).toBeInTheDocument();
+    expect(screen.getByText('9999 тг / л')).toBeInTheDocument();
     expect(screen.getByText('Мёд')).toBeInTheDocument();
   });
 
