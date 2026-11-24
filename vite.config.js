@@ -4,6 +4,9 @@ import { defineConfig } from 'vite'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  // IPv4-адрес: на Windows localhost иначе может слушать только IPv6,
+  // и Playwright не увидит уже запущенный npm run dev
+  server: { host: '127.0.0.1', port: 5173 },
   test: {
     environment: 'jsdom', // в тестах есть document, window
     globals: true,
