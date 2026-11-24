@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { apiFetch } from '../api';
 import ErrorMessage from './ErrorMessage';
 
@@ -19,9 +20,9 @@ function validate({ name, email, password }, isRegister) {
   return null;
 }
 
-// Форма входа и регистрации. Поле «Имя» показывается только при регистрации
-function LoginForm({ onLogin }) {
-  const [mode, setMode] = useState('login');
+// Форма входа (mode="login") и регистрации (mode="register").
+// Поле «Имя» есть только при регистрации
+function AuthForm({ mode, onSuccess }) {
   const [error, setError] = useState(null);
   const [sending, setSending] = useState(false);
 
@@ -51,29 +52,26 @@ function LoginForm({ onLogin }) {
         method: 'POST',
         body: JSON.stringify(body),
       });
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-      onLogin(data.user);
+      onSuccess(data);
     } catch (err) {
       // 400 с details, 401, 409, 429: текст берётся из ответа сервера
       setError(err);
-    } finally {
       setSending(false);
     }
   }
 
   return (
-    <section id="login" className="auth">
-      <h2>{isRegister ? 'Регистрация' : 'Вход'}</h2>
+    <section className="auth">
+      <h1>{isRegister ? 'Регистрация' : 'Вход'}</h1>
       <form className="contact-form" onSubmit={handleSubmit} noValidate>
         {isRegister && (
           <>
             <label htmlFor="auth-name">Имя</label>
-            <input id="auth-name" name="name" type="text" required />
+            <input id="auth-name" name="name" type="text" required autoComplete="name" />
           </>
         )}
 
-        <label htmlFor="auth-email">Email</label>
+        <label htmlFor="auth-email">E-mail</label>
         <input id="auth-email" name="email" type="email" required autoComplete="email" />
 
         <label htmlFor="auth-password">Пароль</label>
@@ -82,7 +80,7 @@ function LoginForm({ onLogin }) {
           name="password"
           type="password"
           required
-          minLength={isRegister ? 8 : undefined}
+          minLength={isRegister ? MIN_PASSWORD_LENGTH : undefined}
           autoComplete={isRegister ? 'new-password' : 'current-password'}
         />
 
@@ -92,18 +90,15 @@ function LoginForm({ onLogin }) {
           {isRegister ? 'Зарегистрироваться' : 'Войти'}
         </button>
       </form>
-      <button
-        type="button"
-        className="link-button"
-        onClick={() => {
-          setMode(isRegister ? 'login' : 'register');
-          setError(null);
-        }}
-      >
-        {isRegister ? 'Уже есть аккаунт? Войти' : 'Нет аккаунта? Зарегистрироваться'}
-      </button>
+      <p>
+        {isRegister ? (
+          <Link to="/login">Уже есть аккаунт? Войти</Link>
+        ) : (
+          <Link to="/register">Нет аккаунта? Зарегистрироваться</Link>
+        )}
+      </p>
     </section>
   );
 }
 
-export default LoginForm;
+export default AuthForm;

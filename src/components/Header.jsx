@@ -1,13 +1,18 @@
-function Header({ cartCount = 0, user, onLogout }) {
+import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+
+function Header({ cartCount = 0 }) {
+  const { user, isAdmin, logout } = useAuth();
+
   return (
     <header className="site-header">
-      <a href="#" className="logo">🌾 АгроМаркет</a>
+      <Link to="/" className="logo">🌾 АгроМаркет</Link>
       <nav>
         <ul className="nav-links">
-          <li><a href="#catalog">Каталог</a></li>
-          <li><a href="#delivery">Доставка</a></li>
-          <li><a href="#contact">Контакты</a></li>
-          {user?.role === 'admin' && <li><a href="#orders">Заявки</a></li>}
+          <li><Link to="/">Каталог</Link></li>
+          <li><a href="/#delivery">Доставка</a></li>
+          <li><a href="/#contact">Контакты</a></li>
+          {isAdmin && <li><Link to="/admin">Админка</Link></li>}
         </ul>
       </nav>
       <div className="header-user">
@@ -16,12 +21,12 @@ function Header({ cartCount = 0, user, onLogout }) {
           <>
             <span>
               {user.name}
-              {user.role === 'admin' && ' (админ)'}
+              {isAdmin && ' (админ)'}
             </span>
-            <button type="button" className="header-button" onClick={onLogout}>Выйти</button>
+            <button type="button" className="header-button" onClick={logout}>Выйти</button>
           </>
         ) : (
-          <a href="#login" className="header-button">Войти</a>
+          <Link to="/login" className="header-button">Войти</Link>
         )}
       </div>
     </header>

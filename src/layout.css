@@ -363,3 +363,35 @@ img {
 .catalog > .auth {
   margin-bottom: 16px;
 }
+
+/* ===== Страницы (лабораторная 12) ===== */
+.page--narrow {
+  grid-template-columns: 1fr;
+  max-width: 720px;
+}
+
+@media (min-width: 1024px) {
+  .page.page--narrow {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card h3 a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.card h3 a:hover {
+  text-decoration: underline;
+}
+
+.product-category {
+  color: #5b6b58;
+  font-size: 0.9rem;
+}
+
+.product-page img {
+  height: 240px;
+  object-fit: cover;
+  border-radius: 6px;
+}
