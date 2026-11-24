@@ -19,3 +19,5 @@ dist-ssr
 coverage/
 test-results/
 playwright-report/
+.env.e2e
+playwright/.cache/
