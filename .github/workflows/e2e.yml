@@ -1,12 +1,13 @@
-name: E2E (production)
+name: E2E smoke (production)
 
+# Полные E2E пишут в базу, поэтому на продакшене только @smoke: они ничего не меняют
 on:
   workflow_dispatch:          # кнопка Run workflow
   schedule:
     - cron: '0 4 * * *'       # ежедневно 04:00 UTC (09:00 в Астане)
 
 jobs:
-  e2e:
+  smoke:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -16,9 +17,9 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx playwright install --with-deps chromium
-      - run: npx playwright test --project=production
+      - run: npm run e2e:smoke
         env:
-          E2E_BASE_URL: ${{ vars.PRODUCTION_URL }}
+          BASE_URL: ${{ vars.PRODUCTION_URL }}
       - uses: actions/upload-artifact@v4
         if: failure()
         with:

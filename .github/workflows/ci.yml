@@ -6,7 +6,7 @@ on:
   pull_request:
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -15,8 +15,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm run lint
-      - run: npm test        # компонентные тесты
-      - run: npm run build
+      - run: npm run lint --if-present
+      - run: npm run test:run    # компонентные тесты (Vitest + RTL + MSW)
+      - run: npm run build       # ловит ошибки, которые прощает dev-сервер
         env:
           VITE_API_URL: https://example.invalid/api   # для проверки сборки адрес не важен
