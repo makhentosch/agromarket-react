@@ -63,6 +63,40 @@ describe('LoginForm', () => {
     expect(onLogin).not.toHaveBeenCalled();
   });
 
+  test('слишком много попыток (429): показывает текст из ответа сервера', async () => {
+    const userEv = userEvent.setup();
+    mockFetch({ error: 'Слишком много попыток. Попробуйте через 15 минут' }, 429);
+    render(<LoginForm onLogin={vi.fn()} />);
+
+    await userEv.type(screen.getByLabelText(/e-?mail|почта/i), 'farmer@agromarket.kz');
+    await userEv.type(screen.getByLabelText(/пароль/i), 'secret123');
+    await userEv.click(screen.getByRole('button', { name: /^войти$/i }));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('Слишком много попыток. Попробуйте через 15 минут');
+  });
+
+  test('регистрация: ошибки полей из details показываются списком', async () => {
+    const userEv = userEvent.setup();
+    mockFetch({
+      error: 'Ошибка валидации',
+      details: [
+        { field: 'email', message: 'Некорректный e-mail' },
+        { field: 'password', message: 'Пароль: не длиннее 72 символов' },
+      ],
+    }, 400);
+    render(<LoginForm onLogin={vi.fn()} />);
+
+    await userEv.click(screen.getByRole('button', { name: /зарегистрироваться/i }));
+    await userEv.type(screen.getByLabelText(/^имя$/i), 'Айгерим');
+    await userEv.type(screen.getByLabelText(/e-?mail|почта/i), 'farmer@agromarket.kz');
+    await userEv.type(screen.getByLabelText(/пароль/i), 'secret123');
+    await userEv.click(screen.getByRole('button', { name: /^зарегистрироваться$/i }));
+
+    const alert = await screen.findByRole('alert');
+    expect(alert).toHaveTextContent('Некорректный e-mail');
+    expect(alert).toHaveTextContent('Пароль: не длиннее 72 символов');
+  });
+
   test('поле «Имя» есть только в режиме регистрации', async () => {
     const userEv = userEvent.setup();
     render(<LoginForm onLogin={vi.fn()} />);
