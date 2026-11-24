@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { apiFetch } from '../api';
 import ProductCard from './ProductCard';
+import ProductForm from './ProductForm';
 
 // Каталог: загрузка товаров с сервера, поиск, удаление (для админа)
 function Catalog({ isAdmin = false, onAdd }) {
@@ -55,6 +56,8 @@ function Catalog({ isAdmin = false, onAdd }) {
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
+
+      {isAdmin && <ProductForm onCreated={(product) => setProducts([...products, product])} />}
 
       {loading && <p className="status">Загрузка...</p>}
       {error && <div className="error" role="alert">{error}</div>}
